@@ -50,6 +50,8 @@ func (r ResponseBody) BadRequest(object string, tag string) ResponseBody {
 		message = fmt.Sprintf("%v is invalid. ex : xample@mail.com", object)
 	case "required":
 		message = fmt.Sprintf("%v cannot be null", object)
+	default:
+		message = fmt.Sprintf("%v value type must be %v", object, tag)
 	}
 	return ResponseBody{
 		Status:  "Bad Request",
