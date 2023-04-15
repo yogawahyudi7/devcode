@@ -2,7 +2,6 @@ package repository
 
 import (
 	"devcode/model"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -25,8 +24,6 @@ func (db *ActivityRepository) GetAll() (data []model.Activity, err error) {
 		return data, err
 	}
 
-	fmt.Println(data)
-	fmt.Println(err)
 	return data, err
 }
 
@@ -38,8 +35,6 @@ func (db *ActivityRepository) GetOne(id int) (data model.Activity, err error) {
 		return data, err
 	}
 
-	fmt.Println(data)
-	fmt.Println(err)
 	return data, err
 }
 
@@ -55,8 +50,6 @@ func (db *ActivityRepository) Delete(id int) (rowAffected int64, err error) {
 
 	rowAffected = query.RowsAffected
 
-	fmt.Println(data)
-	fmt.Println(err)
 	return rowAffected, query.Error
 }
 
@@ -72,8 +65,6 @@ func (db *ActivityRepository) Create(params model.Activity) (data model.Activity
 		return data, err
 	}
 
-	fmt.Println(data)
-	fmt.Println(err)
 	return data, err
 }
 
@@ -96,7 +87,5 @@ func (db *ActivityRepository) Update(id int, params model.Activity) (rowAffected
 
 	rowAffected = query.RowsAffected
 
-	fmt.Println(data)
-	fmt.Println(err)
 	return rowAffected, err
 }
