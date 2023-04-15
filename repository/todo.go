@@ -2,7 +2,6 @@ package repository
 
 import (
 	"devcode/model"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -29,8 +28,6 @@ func (td *TodoRepository) GetAll(id interface{}) (data []model.Todo, err error) 
 		return data, err
 	}
 
-	fmt.Println(data)
-	fmt.Println(err)
 	return data, err
 }
 
@@ -41,8 +38,6 @@ func (td *TodoRepository) GetOne(id int) (data model.Todo, err error) {
 		return data, err
 	}
 
-	fmt.Println(data)
-	fmt.Println(err)
 	return data, err
 }
 
@@ -58,9 +53,6 @@ func (td *TodoRepository) Delete(id int) (rowAffected int64, err error) {
 
 	rowAffected = query.RowsAffected
 
-	fmt.Println(rowAffected)
-	fmt.Println(data)
-	fmt.Println(err)
 	return rowAffected, query.Error
 }
 
@@ -78,18 +70,10 @@ func (td *TodoRepository) Create(params model.Todo) (data model.Todo, err error)
 		return data, err
 	}
 
-	fmt.Println(data)
-	fmt.Println(err)
 	return data, err
 }
 
 func (td *TodoRepository) Update(id int, params model.Todo) (rowAffected int64, err error) {
-
-	// data := model.Todo{
-	// 	Title:    params.Title,
-	// 	Priority: params.Priority,
-	// 	IsActive: params.IsActive,
-	// }
 
 	data := map[string]interface{}{
 		"title":     params.Title,
@@ -109,19 +93,5 @@ func (td *TodoRepository) Update(id int, params model.Todo) (rowAffected int64, 
 
 	rowAffected = query.RowsAffected
 
-	// data = model.Todo{
-	// 	ActivityGroupId: params.ActivityGroupId,
-	// 	Title:           params.Title,
-	// 	Priority:        params.Priority,
-	// 	IsActive:        params.IsActive,
-	// }
-	// err = td.db.Debug().Updates(&data).Error
-	// if err != nil {
-	// 	return data, rowAffected, err
-	// }
-
-	fmt.Println(data)
-	fmt.Println(rowAffected)
-	fmt.Println(err)
 	return rowAffected, err
 }
