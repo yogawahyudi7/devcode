@@ -43,19 +43,21 @@ func (td *ActivityRepository) GetOne(id int) (data model.Activity, err error) {
 	return data, err
 }
 
-func (td *ActivityRepository) Delete(id int) (err error) {
+func (td *ActivityRepository) Delete(id int) (rowAffected int64, err error) {
 
-	data := model.Todo{}
+	data := model.Activity{}
 
-	err = td.db.Debug().Where("activity_id = ?", id).Delete(&data).Error
+	query := td.db.Debug().Where("activity_id = ?", id).Delete(&data)
 
-	if err != nil {
-		return err
+	if query.Error != nil {
+		return rowAffected, query.Error
 	}
+
+	rowAffected = query.RowsAffected
 
 	fmt.Println(data)
 	fmt.Println(err)
-	return err
+	return rowAffected, query.Error
 }
 
 func (td *ActivityRepository) Create(params model.Activity) (data model.Activity, err error) {
@@ -75,25 +77,26 @@ func (td *ActivityRepository) Create(params model.Activity) (data model.Activity
 	return data, err
 }
 
-func (td *ActivityRepository) Update(id int, params model.Activity) (data model.Activity, err error) {
+func (td *ActivityRepository) Update(id int, params model.Activity) (rowAffected int64, err error) {
 
-	err = td.db.Debug().Where("activity_id = ?", id).Find(&data).Error
-
-	if err != nil {
-		return data, err
+	data := map[string]interface{}{
+		"title": params.Title,
+		"email": params.Email,
 	}
 
-	data = model.Activity{
-		Title: params.Title,
-		Email: params.Email,
-	}
-	err = td.db.Debug().Save(&data).Error
+	query := td.db.Debug().Model(&params)
 
-	if err != nil {
-		return data, err
+	query = query.Where("activity_id = ?", id)
+
+	query = query.Updates(data)
+
+	if query.Error != nil {
+		return rowAffected, query.Error
 	}
+
+	rowAffected = query.RowsAffected
 
 	fmt.Println(data)
 	fmt.Println(err)
-	return data, err
+	return rowAffected, err
 }

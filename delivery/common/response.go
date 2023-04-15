@@ -12,11 +12,11 @@ type ResponseBody struct {
 }
 
 type ActivityDataResponse struct {
-	Id        uint   `json:"id"`
-	Title     string `json:"title"`
-	Email     string `json:"email"`
-	CreatedAt string `json:"createdAt"`
-	UpdatedAt string `json:"updatedAt"`
+	Id        uint      `json:"id"`
+	Title     string    `json:"title"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 type TodoDataResponse struct {

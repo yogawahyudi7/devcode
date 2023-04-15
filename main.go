@@ -20,16 +20,17 @@ func main() {
 	util.InitialMigrate(config, db)
 
 	todoRepository := repository.NewTodoRepository(db)
+	activityRepository := repository.NewActivityRepository(db)
 
 	todoController := controller.NewTodoController(todoRepository)
+	activityController := controller.NewActivityController(activityRepository)
 
-	//echo package
 	e := echo.New()
 	middleware.LogMiddleware(e)
 	e.Pre(middlewares.RemoveTrailingSlash())
 
 	route.RegisterPathTodo(e, todoController)
+	route.RegisterPathActivity(e, activityController)
 
 	e.Logger.Fatal(e.Start(":" + constant.Port))
-
 }

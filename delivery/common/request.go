@@ -1,11 +1,13 @@
 package common
 
 type ActivityCreate struct {
-	Id        uint   `json:"id"`
-	Title     string `json:"title"`
-	Email     string `json:"email"`
-	CreatedAt string `json:"createdAt"`
-	UpdatedAt string `json:"updatedAt"`
+	Title string `json:"title"`
+	Email string `json:"email"`
+}
+
+type ActivityUpdate struct {
+	Title string `json:"title"`
+	Email string `json:"email"`
 }
 
 type TodoCreate struct {
