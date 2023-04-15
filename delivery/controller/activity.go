@@ -6,10 +6,13 @@ import (
 	"devcode/repository"
 	"fmt"
 	"net/http"
+	"reflect"
 	"strconv"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/stoewer/go-strcase"
 )
 
 type ActivityController struct {
@@ -77,9 +80,20 @@ func (rp ActivityController) Create(ctx echo.Context) error {
 	request := common.ActivityCreate{}
 	response := common.ResponseBody{}
 
-	ctx.Bind(&request)
+	err := ctx.Bind(&request)
+	if err != nil {
+		data := reflect.ValueOf(request)
+		fieldNum := data.NumField()
+		reflectType := data.Type()
 
-	if err := ctx.Validate(request); err != nil {
+		for i := 0; i < fieldNum; i++ {
+			if strings.Contains(err.Error(), strcase.SnakeCase(reflectType.Field(i).Name)) {
+				return ctx.JSON(http.StatusOK, response.BadRequest(reflectType.Field(i).Name, reflectType.Field(i).Type.Name()))
+			}
+		}
+	}
+
+	if err = ctx.Validate(request); err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			fmt.Println(err.Field(), err.Tag())
 			return ctx.JSON(http.StatusOK, response.BadRequest(err.Field(), err.Tag()))
@@ -133,9 +147,20 @@ func (rp ActivityController) Update(ctx echo.Context) error {
 	id := ctx.Param("id")
 	intId, _ := strconv.Atoi(id)
 
-	ctx.Bind(&request)
+	err := ctx.Bind(&request)
+	if err != nil {
+		data := reflect.ValueOf(request)
+		fieldNum := data.NumField()
+		reflectType := data.Type()
 
-	if err := ctx.Validate(request); err != nil {
+		for i := 0; i < fieldNum; i++ {
+			if strings.Contains(err.Error(), strcase.SnakeCase(reflectType.Field(i).Name)) {
+				return ctx.JSON(http.StatusOK, response.BadRequest(reflectType.Field(i).Name, reflectType.Field(i).Type.Name()))
+			}
+		}
+	}
+
+	if err = ctx.Validate(request); err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			fmt.Println(err.Field(), err.Tag())
 			return ctx.JSON(http.StatusOK, response.BadRequest(err.Field(), err.Tag()))
