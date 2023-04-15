@@ -3,6 +3,8 @@ package common
 import (
 	"fmt"
 	"time"
+
+	"github.com/stoewer/go-strcase"
 )
 
 type ResponseBody struct {
@@ -38,9 +40,17 @@ func (r ResponseBody) Success(data interface{}) ResponseBody {
 	}
 }
 
-func (r ResponseBody) BadRequest(object string) ResponseBody {
+func (r ResponseBody) BadRequest(object string, tag string) ResponseBody {
 
-	message := fmt.Sprintf("%v cannot be null", object)
+	object = strcase.SnakeCase(object)
+	message := ""
+
+	switch tag {
+	case "email":
+		message = fmt.Sprintf("%v is invalid. ex : xample@mail.com", object)
+	case "required":
+		message = fmt.Sprintf("%v cannot be null", object)
+	}
 	return ResponseBody{
 		Status:  "Bad Request",
 		Message: message,

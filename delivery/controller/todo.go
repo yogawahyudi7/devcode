@@ -5,9 +5,11 @@ import (
 	"devcode/delivery/common"
 	"devcode/model"
 	"devcode/repository"
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 )
 
@@ -85,11 +87,17 @@ func (rp TodoController) GetOne(ctx echo.Context) error {
 }
 
 func (rp TodoController) Create(ctx echo.Context) error {
+	request := common.TodoCreate{}
 	response := common.ResponseBody{}
 
-	request := common.TodoCreate{}
-
 	ctx.Bind(&request)
+
+	if err := ctx.Validate(request); err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			fmt.Println(err.Field(), err.Tag())
+			return ctx.JSON(http.StatusOK, response.BadRequest(err.Field(), err.Tag()))
+		}
+	}
 
 	model := model.Todo{
 		ActivityGroupId: request.ActivityGroupId,
@@ -136,13 +144,20 @@ func (rp TodoController) Delete(ctx echo.Context) error {
 }
 
 func (rp TodoController) Update(ctx echo.Context) error {
+	request := common.TodoUpdate{}
 	response := common.ResponseBody{}
 
 	id := ctx.Param("id")
 	intId, _ := strconv.Atoi(id)
 
-	request := common.TodoUpdate{}
 	ctx.Bind(&request)
+
+	if err := ctx.Validate(request); err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			fmt.Println(err.Field(), err.Tag())
+			return ctx.JSON(http.StatusOK, response.BadRequest(err.Field(), err.Tag()))
+		}
+	}
 
 	model := model.Todo{
 		Title:    request.Title,

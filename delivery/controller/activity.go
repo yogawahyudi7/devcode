@@ -4,9 +4,11 @@ import (
 	"devcode/delivery/common"
 	"devcode/model"
 	"devcode/repository"
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 )
 
@@ -77,6 +79,13 @@ func (rp ActivityController) Create(ctx echo.Context) error {
 
 	ctx.Bind(&request)
 
+	if err := ctx.Validate(request); err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			fmt.Println(err.Field(), err.Tag())
+			return ctx.JSON(http.StatusOK, response.BadRequest(err.Field(), err.Tag()))
+		}
+	}
+
 	model := model.Activity{
 		Title: request.Title,
 		Email: request.Email,
@@ -125,6 +134,13 @@ func (rp ActivityController) Update(ctx echo.Context) error {
 	intId, _ := strconv.Atoi(id)
 
 	ctx.Bind(&request)
+
+	if err := ctx.Validate(request); err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			fmt.Println(err.Field(), err.Tag())
+			return ctx.JSON(http.StatusOK, response.BadRequest(err.Field(), err.Tag()))
+		}
+	}
 
 	model := model.Activity{
 		Title: request.Title,
