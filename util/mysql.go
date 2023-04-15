@@ -35,5 +35,4 @@ func InitialMigrate(config *config.ServerConfig, db *gorm.DB) {
 		db.AutoMigrate(&model.Activity{})
 		db.AutoMigrate(&model.Todo{})
 	}
-
 }

@@ -21,7 +21,7 @@ func NewTodoController(todo *repository.TodoRepository) *TodoController {
 	}
 }
 
-func (pc TodoController) GetAll(ctx echo.Context) error {
+func (rp TodoController) GetAll(ctx echo.Context) error {
 	response := common.ResponseBody{}
 
 	activityGroupId := ctx.QueryParam("activity_group_id")
@@ -32,7 +32,7 @@ func (pc TodoController) GetAll(ctx echo.Context) error {
 		id = nil
 	}
 
-	data, err := pc.Todo.GetAll(id)
+	data, err := rp.Todo.GetAll(id)
 	if err != nil {
 		return ctx.JSON(http.StatusOK, response.InternalServerError(err))
 	}
@@ -55,13 +55,13 @@ func (pc TodoController) GetAll(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response.Success(dataMapping))
 }
 
-func (pc TodoController) GetOne(ctx echo.Context) error {
+func (rp TodoController) GetOne(ctx echo.Context) error {
 	response := common.ResponseBody{}
 
 	id := ctx.Param("id")
 	intId, _ := strconv.Atoi(id)
 
-	data, err := pc.Todo.GetOne(intId)
+	data, err := rp.Todo.GetOne(intId)
 	if err != nil {
 		return ctx.JSON(http.StatusOK, response.InternalServerError(err))
 	}
@@ -71,7 +71,6 @@ func (pc TodoController) GetOne(ctx echo.Context) error {
 	}
 
 	v := data
-	// dataMapping := common.TodoDataResponse{}
 	dataMapping := common.TodoDataResponse{
 		Id:              v.TodoId,
 		ActivityGroupId: v.ActivityGroupId,
@@ -85,7 +84,7 @@ func (pc TodoController) GetOne(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response.Success(dataMapping))
 }
 
-func (pc TodoController) Create(ctx echo.Context) error {
+func (rp TodoController) Create(ctx echo.Context) error {
 	response := common.ResponseBody{}
 
 	request := common.TodoCreate{}
@@ -99,7 +98,7 @@ func (pc TodoController) Create(ctx echo.Context) error {
 		IsActive:        request.IsActive,
 	}
 
-	data, err := pc.Todo.Create(model)
+	data, err := rp.Todo.Create(model)
 	if err != nil {
 		return ctx.JSON(http.StatusOK, response.InternalServerError(err))
 	}
@@ -118,13 +117,13 @@ func (pc TodoController) Create(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response.Success(dataMapping))
 }
 
-func (pc TodoController) Delete(ctx echo.Context) error {
+func (rp TodoController) Delete(ctx echo.Context) error {
 	response := common.ResponseBody{}
 
 	id := ctx.Param("id")
 	intId, _ := strconv.Atoi(id)
 
-	rowAffected, err := pc.Todo.Delete(intId)
+	rowAffected, err := rp.Todo.Delete(intId)
 	if err != nil {
 		return ctx.JSON(http.StatusOK, response.InternalServerError(err))
 	}
@@ -133,14 +132,10 @@ func (pc TodoController) Delete(ctx echo.Context) error {
 		return ctx.JSON(http.StatusOK, response.NotFound("Todo", id))
 	}
 
-	// if data.TodoId == 0 {
-	// 	return ctx.JSON(http.StatusOK, response.NotFound("Todo", id))
-	// }
-
 	return ctx.JSON(http.StatusOK, response.Success(nil))
 }
 
-func (pc TodoController) Update(ctx echo.Context) error {
+func (rp TodoController) Update(ctx echo.Context) error {
 	response := common.ResponseBody{}
 
 	id := ctx.Param("id")
@@ -155,7 +150,7 @@ func (pc TodoController) Update(ctx echo.Context) error {
 		IsActive: request.IsActive,
 	}
 
-	rowAffected, err := pc.Todo.Update(intId, model)
+	rowAffected, err := rp.Todo.Update(intId, model)
 	if err != nil {
 		return ctx.JSON(http.StatusOK, response.InternalServerError(err))
 	}
@@ -164,7 +159,7 @@ func (pc TodoController) Update(ctx echo.Context) error {
 		return ctx.JSON(http.StatusOK, response.NotFound("Todo", id))
 	}
 
-	data, err := pc.Todo.GetOne(intId)
+	data, err := rp.Todo.GetOne(intId)
 	if err != nil {
 		return ctx.JSON(http.StatusOK, response.InternalServerError(err))
 	}

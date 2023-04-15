@@ -21,7 +21,6 @@ type ServerConfig struct {
 func Get() *ServerConfig {
 
 	err := godotenv.Load()
-
 	if err != nil {
 		log.Info("Error loading .env file")
 	}
@@ -29,7 +28,6 @@ func Get() *ServerConfig {
 	var defaultConfig ServerConfig
 
 	defaultConfig.Mode = os.Getenv("MODE")
-
 	defaultConfig.Database.Host = os.Getenv("MYSQL_HOST")
 	defaultConfig.Database.Port = os.Getenv("MYSQL_PORT")
 	defaultConfig.Database.Username = os.Getenv("MYSQL_USER")

@@ -14,9 +14,12 @@ import (
 )
 
 func main() {
+	e := echo.New()
+	middleware.LogMiddleware(e)
+	e.Pre(middlewares.RemoveTrailingSlash())
+
 	config := config.Get()
 	db := util.InitDB(config)
-
 	util.InitialMigrate(config, db)
 
 	todoRepository := repository.NewTodoRepository(db)
@@ -24,10 +27,6 @@ func main() {
 
 	todoController := controller.NewTodoController(todoRepository)
 	activityController := controller.NewActivityController(activityRepository)
-
-	e := echo.New()
-	middleware.LogMiddleware(e)
-	e.Pre(middlewares.RemoveTrailingSlash())
 
 	route.RegisterPathTodo(e, todoController)
 	route.RegisterPathActivity(e, activityController)

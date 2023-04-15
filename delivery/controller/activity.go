@@ -60,7 +60,6 @@ func (rp ActivityController) GetOne(ctx echo.Context) error {
 	}
 
 	v := data
-	// dataMapping := common.ActivityDataResponse{}
 	dataMapping := common.ActivityDataResponse{
 		Id:        v.ActivityId,
 		Title:     v.Title,

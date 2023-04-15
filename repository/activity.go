@@ -17,22 +17,9 @@ func NewActivityRepository(db *gorm.DB) *ActivityRepository {
 	}
 }
 
-func (td *ActivityRepository) GetAll() (data []model.Activity, err error) {
+func (db *ActivityRepository) GetAll() (data []model.Activity, err error) {
 
-	err = td.db.Debug().Find(&data).Error
-
-	if err != nil {
-		return data, err
-	}
-
-	fmt.Println(data)
-	fmt.Println(err)
-	return data, err
-}
-
-func (td *ActivityRepository) GetOne(id int) (data model.Activity, err error) {
-
-	err = td.db.Debug().Where("activity_id = ?", id).Find(&data).Error
+	err = db.db.Debug().Find(&data).Error
 
 	if err != nil {
 		return data, err
@@ -43,11 +30,24 @@ func (td *ActivityRepository) GetOne(id int) (data model.Activity, err error) {
 	return data, err
 }
 
-func (td *ActivityRepository) Delete(id int) (rowAffected int64, err error) {
+func (db *ActivityRepository) GetOne(id int) (data model.Activity, err error) {
+
+	err = db.db.Debug().Where("activity_id = ?", id).Find(&data).Error
+
+	if err != nil {
+		return data, err
+	}
+
+	fmt.Println(data)
+	fmt.Println(err)
+	return data, err
+}
+
+func (db *ActivityRepository) Delete(id int) (rowAffected int64, err error) {
 
 	data := model.Activity{}
 
-	query := td.db.Debug().Where("activity_id = ?", id).Delete(&data)
+	query := db.db.Debug().Where("activity_id = ?", id).Delete(&data)
 
 	if query.Error != nil {
 		return rowAffected, query.Error
@@ -60,13 +60,13 @@ func (td *ActivityRepository) Delete(id int) (rowAffected int64, err error) {
 	return rowAffected, query.Error
 }
 
-func (td *ActivityRepository) Create(params model.Activity) (data model.Activity, err error) {
+func (db *ActivityRepository) Create(params model.Activity) (data model.Activity, err error) {
 
 	data = model.Activity{
 		Title: params.Title,
 		Email: params.Email,
 	}
-	err = td.db.Debug().Create(&data).Error
+	err = db.db.Debug().Create(&data).Error
 
 	if err != nil {
 		return data, err
@@ -77,14 +77,14 @@ func (td *ActivityRepository) Create(params model.Activity) (data model.Activity
 	return data, err
 }
 
-func (td *ActivityRepository) Update(id int, params model.Activity) (rowAffected int64, err error) {
+func (db *ActivityRepository) Update(id int, params model.Activity) (rowAffected int64, err error) {
 
 	data := map[string]interface{}{
 		"title": params.Title,
 		"email": params.Email,
 	}
 
-	query := td.db.Debug().Model(&params)
+	query := db.db.Debug().Model(&params)
 
 	query = query.Where("activity_id = ?", id)
 

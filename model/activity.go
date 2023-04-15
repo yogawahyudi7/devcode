@@ -10,3 +10,7 @@ type Activity struct {
 	UpdatedAt  *time.Time
 	DeletedAt  *time.Time
 }
+
+func (Activity) TableName() string {
+	return "activities"
+}

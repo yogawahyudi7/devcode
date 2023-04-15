@@ -5,7 +5,6 @@ import (
 )
 
 type Todo struct {
-	// gorm.Model
 	TodoId          uint `gorm:"primarykey"`
 	ActivityGroupId int
 	Title           string
@@ -14,4 +13,8 @@ type Todo struct {
 	CreatedAt       *time.Time
 	UpdatedAt       *time.Time
 	DeletedAt       *time.Time
+}
+
+func (Todo) TableName() string {
+	return "todos"
 }

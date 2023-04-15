@@ -30,6 +30,7 @@ type TodoDataResponse struct {
 }
 
 func (r ResponseBody) Success(data interface{}) ResponseBody {
+
 	return ResponseBody{
 		Status:  "success",
 		Message: "success",
@@ -40,7 +41,6 @@ func (r ResponseBody) Success(data interface{}) ResponseBody {
 func (r ResponseBody) BadRequest(object string) ResponseBody {
 
 	message := fmt.Sprintf("%v cannot be null", object)
-
 	return ResponseBody{
 		Status:  "Bad Request",
 		Message: message,
@@ -49,9 +49,7 @@ func (r ResponseBody) BadRequest(object string) ResponseBody {
 
 func (r ResponseBody) NotFound(object string, id string) ResponseBody {
 
-	// strId := strconv.Itoa(id)
 	message := fmt.Sprintf("%v with ID %v Not Found", object, id)
-
 	responsebody := ResponseBody{
 		Status:  "Not Found",
 		Message: message,
@@ -63,7 +61,6 @@ func (r ResponseBody) NotFound(object string, id string) ResponseBody {
 func (r ResponseBody) InternalServerError(err error) ResponseBody {
 
 	message := err.Error()
-
 	responsebody := ResponseBody{
 		Status:  "Internal Server Error",
 		Message: message,
