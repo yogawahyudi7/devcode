@@ -39,7 +39,7 @@ func (rp TodoController) GetAll(ctx echo.Context) error {
 
 	data, err := rp.Todo.GetAll(id)
 	if err != nil {
-		return ctx.JSON(http.StatusOK, response.InternalServerError(err))
+		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
 
 	dataMapping := []common.TodoDataResponse{}
@@ -68,11 +68,11 @@ func (rp TodoController) GetOne(ctx echo.Context) error {
 
 	data, err := rp.Todo.GetOne(intId)
 	if err != nil {
-		return ctx.JSON(http.StatusOK, response.InternalServerError(err))
+		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
 
 	if data.TodoId == 0 {
-		return ctx.JSON(http.StatusOK, response.NotFound("Todo", id))
+		return ctx.JSON(http.StatusNotFound, response.NotFound("Todo", id))
 	}
 
 	v := data
@@ -101,7 +101,7 @@ func (rp TodoController) Create(ctx echo.Context) error {
 
 		for i := 0; i < fieldNum; i++ {
 			if strings.Contains(err.Error(), strcase.SnakeCase(reflectType.Field(i).Name)) {
-				return ctx.JSON(http.StatusOK, response.BadRequest(reflectType.Field(i).Name, reflectType.Field(i).Type.Name()))
+				return ctx.JSON(http.StatusBadRequest, response.BadRequest(reflectType.Field(i).Name, reflectType.Field(i).Type.Name()))
 			}
 		}
 	}
@@ -109,7 +109,7 @@ func (rp TodoController) Create(ctx echo.Context) error {
 	if err = ctx.Validate(request); err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			fmt.Println(err.Field(), err.Tag())
-			return ctx.JSON(http.StatusOK, response.BadRequest(err.Field(), err.Tag()))
+			return ctx.JSON(http.StatusBadRequest, response.BadRequest(err.Field(), err.Tag()))
 		}
 	}
 
@@ -122,7 +122,7 @@ func (rp TodoController) Create(ctx echo.Context) error {
 
 	data, err := rp.Todo.Create(model)
 	if err != nil {
-		return ctx.JSON(http.StatusOK, response.InternalServerError(err))
+		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
 
 	v := data
@@ -147,11 +147,11 @@ func (rp TodoController) Delete(ctx echo.Context) error {
 
 	rowAffected, err := rp.Todo.Delete(intId)
 	if err != nil {
-		return ctx.JSON(http.StatusOK, response.InternalServerError(err))
+		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
 
 	if rowAffected == 0 {
-		return ctx.JSON(http.StatusOK, response.NotFound("Todo", id))
+		return ctx.JSON(http.StatusNotFound, response.NotFound("Todo", id))
 	}
 
 	return ctx.JSON(http.StatusOK, response.Success(nil))
@@ -172,7 +172,7 @@ func (rp TodoController) Update(ctx echo.Context) error {
 
 		for i := 0; i < fieldNum; i++ {
 			if strings.Contains(err.Error(), strcase.SnakeCase(reflectType.Field(i).Name)) {
-				return ctx.JSON(http.StatusOK, response.BadRequest(reflectType.Field(i).Name, reflectType.Field(i).Type.Name()))
+				return ctx.JSON(http.StatusBadRequest, response.BadRequest(reflectType.Field(i).Name, reflectType.Field(i).Type.Name()))
 			}
 		}
 	}
@@ -180,7 +180,7 @@ func (rp TodoController) Update(ctx echo.Context) error {
 	if err = ctx.Validate(request); err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			fmt.Println(err.Field(), err.Tag())
-			return ctx.JSON(http.StatusOK, response.BadRequest(err.Field(), err.Tag()))
+			return ctx.JSON(http.StatusBadRequest, response.BadRequest(err.Field(), err.Tag()))
 		}
 	}
 
@@ -192,16 +192,16 @@ func (rp TodoController) Update(ctx echo.Context) error {
 
 	rowAffected, err := rp.Todo.Update(intId, model)
 	if err != nil {
-		return ctx.JSON(http.StatusOK, response.InternalServerError(err))
+		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
 
 	if rowAffected == 0 {
-		return ctx.JSON(http.StatusOK, response.NotFound("Todo", id))
+		return ctx.JSON(http.StatusNotFound, response.NotFound("Todo", id))
 	}
 
 	data, err := rp.Todo.GetOne(intId)
 	if err != nil {
-		return ctx.JSON(http.StatusOK, response.InternalServerError(err))
+		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
 
 	v := data
