@@ -119,7 +119,7 @@ func (rp ActivityController) Create(ctx echo.Context) error {
 		UpdatedAt: *v.UpdatedAt,
 	}
 
-	return ctx.JSON(http.StatusOK, response.Success(dataMapping))
+	return ctx.JSON(http.StatusCreated, response.Success(dataMapping))
 }
 
 func (rp ActivityController) Delete(ctx echo.Context) error {

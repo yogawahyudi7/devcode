@@ -34,8 +34,8 @@ type TodoDataResponse struct {
 func (r ResponseBody) Success(data interface{}) ResponseBody {
 
 	return ResponseBody{
-		Status:  "success",
-		Message: "success",
+		Status:  "Success",
+		Message: "Success",
 		Data:    data,
 	}
 }
