@@ -2,12 +2,12 @@ package common
 
 type ActivityCreate struct {
 	Title string `json:"title" validate:"required"`
-	Email string `json:"email" validate:"required"`
+	Email string `json:"email"`
 }
 
 type ActivityUpdate struct {
 	Title string `json:"title" validate:"required"`
-	Email string `json:"email" validate:"required"`
+	Email string `json:"email"`
 }
 
 type TodoCreate struct {
@@ -17,7 +17,7 @@ type TodoCreate struct {
 }
 
 type TodoUpdate struct {
-	Title    string `json:"title" validate:"required"`
+	Title    string `json:"title"`
 	IsActive bool   `json:"is_active"`
-	Priority string `json:"priority" validate:"required"`
+	Priority string `json:"priority"`
 }
