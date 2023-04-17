@@ -59,6 +59,7 @@ func (db *ActivityRepository) Create(params model.Activity) (data model.Activity
 		Title: params.Title,
 		Email: params.Email,
 	}
+
 	err = db.db.Debug().Create(&data).Error
 
 	if err != nil {
@@ -70,14 +71,16 @@ func (db *ActivityRepository) Create(params model.Activity) (data model.Activity
 
 func (db *ActivityRepository) Update(id int, params model.Activity) (rowAffected int64, err error) {
 
-	data := map[string]interface{}{
-		"title": params.Title,
-		"email": params.Email,
+	data := model.Activity{
+		Title: params.Title,
+		Email: params.Email,
 	}
 
 	query := db.db.Debug().Model(&params)
 
 	query = query.Where("activity_id = ?", id)
+
+	query = query.Update("email", params.Email)
 
 	query = query.Updates(data)
 

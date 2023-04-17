@@ -36,8 +36,8 @@ func (rp ActivityController) GetAll(ctx echo.Context) error {
 			Id:        v.ActivityId,
 			Title:     v.Title,
 			Email:     v.Email,
-			CreatedAt: *v.CreatedAt,
-			UpdatedAt: *v.UpdatedAt,
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
 		}
 
 		dataMapping = append(dataMapping, vData)
@@ -66,8 +66,8 @@ func (rp ActivityController) GetOne(ctx echo.Context) error {
 		Id:        v.ActivityId,
 		Title:     v.Title,
 		Email:     v.Email,
-		CreatedAt: *v.CreatedAt,
-		UpdatedAt: *v.UpdatedAt,
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
 	}
 
 	return ctx.JSON(http.StatusOK, response.Success(dataMapping))
@@ -102,19 +102,19 @@ func (rp ActivityController) Create(ctx echo.Context) error {
 		Title: request.Title,
 		Email: request.Email,
 	}
-
+	fmt.Println("DSINSI")
 	data, err := rp.Activity.Create(model)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
-
+	fmt.Println("DSINSI")
 	v := data
-	dataMapping := common.ActivityDataResponse{
+	dataMapping := common.ActivityCreateDataResponse{
 		Id:        v.ActivityId,
 		Title:     v.Title,
 		Email:     v.Email,
-		CreatedAt: *v.CreatedAt,
-		UpdatedAt: *v.UpdatedAt,
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
 	}
 
 	return ctx.JSON(http.StatusCreated, response.Success(dataMapping))
@@ -135,7 +135,9 @@ func (rp ActivityController) Delete(ctx echo.Context) error {
 		return ctx.JSON(http.StatusNotFound, response.NotFound("Activity", id))
 	}
 
-	return ctx.JSON(http.StatusOK, response.Success(nil))
+	dataMapping := common.ActivityDataResponse{}
+
+	return ctx.JSON(http.StatusOK, response.Success(dataMapping))
 }
 
 func (rp ActivityController) Update(ctx echo.Context) error {
@@ -166,21 +168,26 @@ func (rp ActivityController) Update(ctx echo.Context) error {
 		}
 	}
 
+	data, err := rp.Activity.GetOne(intId)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
+	}
+
+	if data.ActivityId == 0 {
+		return ctx.JSON(http.StatusNotFound, response.NotFound("Activity", id))
+	}
+
 	model := model.Activity{
 		Title: request.Title,
 		Email: request.Email,
 	}
 
-	rowAffected, err := rp.Activity.Update(intId, model)
+	_, err = rp.Activity.Update(intId, model)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
 
-	if rowAffected == 0 {
-		return ctx.JSON(http.StatusNotFound, response.NotFound("Activity", id))
-	}
-
-	data, err := rp.Activity.GetOne(intId)
+	data, err = rp.Activity.GetOne(intId)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
@@ -190,8 +197,8 @@ func (rp ActivityController) Update(ctx echo.Context) error {
 		Id:        v.ActivityId,
 		Title:     v.Title,
 		Email:     v.Email,
-		CreatedAt: *v.CreatedAt,
-		UpdatedAt: *v.UpdatedAt,
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
 	}
 
 	return ctx.JSON(http.StatusOK, response.Success(dataMapping))

@@ -13,22 +13,34 @@ type ResponseBody struct {
 	Data    interface{} `json:"data"`
 }
 
+type ResponseBodyFailed struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
 type ActivityDataResponse struct {
-	Id        uint      `json:"id"`
-	Title     string    `json:"title"`
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	Id        uint       `json:"id"`
+	Title     string     `json:"title"`
+	Email     *string    `json:"email"`
+	CreatedAt *time.Time `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt"`
+}
+
+type ActivityCreateDataResponse struct {
+	Id        uint       `json:"id,omitempty"`
+	Title     string     `json:"title,omitempty"`
+	Email     *string    `json:"email,omitempty"`
+	CreatedAt *time.Time `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt"`
 }
 
 type TodoDataResponse struct {
-	Id              uint      `json:"id"`
-	ActivityGroupId int       `json:"activity_group_id"`
-	Title           string    `json:"title"`
-	IsActive        bool      `json:"is_active"`
-	Priority        string    `json:"priority"`
-	CreatedAt       time.Time `json:"createdAt"`
-	UpdatedAt       time.Time `json:"updatedAt"`
+	Id              uint       `json:"id"`
+	ActivityGroupId int        `json:"activity_group_id"`
+	Title           string     `json:"title"`
+	IsActive        bool       `json:"is_active"`
+	Priority        string     `json:"priority"`
+	CreatedAt       *time.Time `json:"createdAt"`
+	UpdatedAt       *time.Time `json:"updatedAt"`
 }
 
 func (r ResponseBody) Success(data interface{}) ResponseBody {
@@ -40,7 +52,7 @@ func (r ResponseBody) Success(data interface{}) ResponseBody {
 	}
 }
 
-func (r ResponseBody) BadRequest(object string, tag string) ResponseBody {
+func (r ResponseBody) BadRequest(object string, tag string) ResponseBodyFailed {
 
 	object = strcase.SnakeCase(object)
 	message := ""
@@ -53,16 +65,16 @@ func (r ResponseBody) BadRequest(object string, tag string) ResponseBody {
 	default:
 		message = fmt.Sprintf("%v value type must be %v", object, tag)
 	}
-	return ResponseBody{
+	return ResponseBodyFailed{
 		Status:  "Bad Request",
 		Message: message,
 	}
 }
 
-func (r ResponseBody) NotFound(object string, id string) ResponseBody {
+func (r ResponseBody) NotFound(object string, id string) ResponseBodyFailed {
 
 	message := fmt.Sprintf("%v with ID %v Not Found", object, id)
-	responsebody := ResponseBody{
+	responsebody := ResponseBodyFailed{
 		Status:  "Not Found",
 		Message: message,
 	}
@@ -70,10 +82,10 @@ func (r ResponseBody) NotFound(object string, id string) ResponseBody {
 	return responsebody
 }
 
-func (r ResponseBody) InternalServerError(err error) ResponseBody {
+func (r ResponseBody) InternalServerError(err error) ResponseBodyFailed {
 
 	message := err.Error()
-	responsebody := ResponseBody{
+	responsebody := ResponseBodyFailed{
 		Status:  "Internal Server Error",
 		Message: message,
 	}

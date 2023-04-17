@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"devcode/constant"
 	"devcode/delivery/common"
 	"devcode/model"
 	"devcode/repository"
@@ -47,8 +46,8 @@ func (rp TodoController) GetAll(ctx echo.Context) error {
 			Title:           v.Title,
 			IsActive:        v.IsActive,
 			Priority:        v.Priority,
-			CreatedAt:       *v.CreatedAt,
-			UpdatedAt:       *v.UpdatedAt,
+			CreatedAt:       v.CreatedAt,
+			UpdatedAt:       v.UpdatedAt,
 		}
 
 		dataMapping = append(dataMapping, vData)
@@ -79,8 +78,8 @@ func (rp TodoController) GetOne(ctx echo.Context) error {
 		Title:           v.Title,
 		IsActive:        v.IsActive,
 		Priority:        v.Priority,
-		CreatedAt:       *v.CreatedAt,
-		UpdatedAt:       *v.UpdatedAt,
+		CreatedAt:       v.CreatedAt,
+		UpdatedAt:       v.UpdatedAt,
 	}
 
 	return ctx.JSON(http.StatusOK, response.Success(dataMapping))
@@ -114,7 +113,7 @@ func (rp TodoController) Create(ctx echo.Context) error {
 	model := model.Todo{
 		ActivityGroupId: request.ActivityGroupId,
 		Title:           request.Title,
-		Priority:        constant.VeryHigh,
+		Priority:        request.Priority,
 		IsActive:        request.IsActive,
 	}
 
@@ -130,8 +129,8 @@ func (rp TodoController) Create(ctx echo.Context) error {
 		Title:           v.Title,
 		IsActive:        v.IsActive,
 		Priority:        v.Priority,
-		CreatedAt:       *v.CreatedAt,
-		UpdatedAt:       *v.UpdatedAt,
+		CreatedAt:       v.CreatedAt,
+		UpdatedAt:       v.UpdatedAt,
 	}
 
 	return ctx.JSON(http.StatusCreated, response.Success(dataMapping))
@@ -152,7 +151,9 @@ func (rp TodoController) Delete(ctx echo.Context) error {
 		return ctx.JSON(http.StatusNotFound, response.NotFound("Todo", id))
 	}
 
-	return ctx.JSON(http.StatusOK, response.Success(nil))
+	dataMapping := common.ActivityDataResponse{}
+
+	return ctx.JSON(http.StatusOK, response.Success(dataMapping))
 }
 
 func (rp TodoController) Update(ctx echo.Context) error {
@@ -210,8 +211,8 @@ func (rp TodoController) Update(ctx echo.Context) error {
 		Title:           v.Title,
 		IsActive:        v.IsActive,
 		Priority:        v.Priority,
-		CreatedAt:       *v.CreatedAt,
-		UpdatedAt:       *v.UpdatedAt,
+		CreatedAt:       v.CreatedAt,
+		UpdatedAt:       v.UpdatedAt,
 	}
 
 	return ctx.JSON(http.StatusOK, response.Success(dataMapping))
