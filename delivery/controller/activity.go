@@ -78,18 +78,6 @@ func (rp ActivityController) Create(ctx echo.Context) error {
 	response := common.ResponseBody{}
 
 	ctx.Bind(&request)
-	// err := ctx.Bind(&request)
-	// if err != nil {
-	// 	data := reflect.ValueOf(request)
-	// 	fieldNum := data.NumField()
-	// 	reflectType := data.Type()
-
-	// 	for i := 0; i < fieldNum; i++ {
-	// 		if strings.Contains(err.Error(), strcase.SnakeCase(reflectType.Field(i).Name)) {
-	// 			return ctx.JSON(http.StatusBadRequest, response.BadRequest(reflectType.Field(i).Name, reflectType.Field(i).Type.Name()))
-	// 		}
-	// 	}
-	// }
 
 	if err := ctx.Validate(request); err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
@@ -164,18 +152,6 @@ func (rp ActivityController) Update(ctx echo.Context) error {
 	}
 
 	ctx.Bind(&request)
-	// err := ctx.Bind(&request)
-	// if err != nil {
-	// 	data := reflect.ValueOf(request)
-	// 	fieldNum := data.NumField()
-	// 	reflectType := data.Type()
-
-	// 	for i := 0; i < fieldNum; i++ {
-	// 		if strings.Contains(err.Error(), strcase.SnakeCase(reflectType.Field(i).Name)) {
-	// 			return ctx.JSON(http.StatusBadRequest, response.BadRequest(reflectType.Field(i).Name, reflectType.Field(i).Type.Name()))
-	// 		}
-	// 	}
-	// }
 
 	if err := ctx.Validate(request); err != nil {
 		for _, err := range err.(validator.ValidationErrors) {

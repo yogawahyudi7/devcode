@@ -99,18 +99,6 @@ func (rp TodoController) Create(ctx echo.Context) error {
 	response := common.ResponseBody{}
 
 	ctx.Bind(&request)
-	// err := ctx.Bind(&request)
-	// if err != nil {
-	// 	data := reflect.ValueOf(request)
-	// 	fieldNum := data.NumField()
-	// 	reflectType := data.Type()
-
-	// 	for i := 0; i < fieldNum; i++ {
-	// 		if strings.Contains(err.Error(), strcase.SnakeCase(reflectType.Field(i).Name)) {
-	// 			return ctx.JSON(http.StatusBadRequest, response.BadRequest(reflectType.Field(i).Name, reflectType.Field(i).Type.Name()))
-	// 		}
-	// 	}
-	// }
 
 	if err := ctx.Validate(request); err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
@@ -125,14 +113,6 @@ func (rp TodoController) Create(ctx echo.Context) error {
 		Priority:        request.Priority,
 		IsActive:        request.IsActive,
 	}
-
-	// if model.IsActive == "" {
-	// 	model.IsActive = constant.VeryHigh
-	// }
-
-	// if model.Priority == "" {
-	// 	model.Priority = constant.VeryHigh
-	// }
 
 	data, err := rp.Todo.Create(model)
 	if err != nil {
@@ -185,7 +165,7 @@ func (rp TodoController) Update(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
 	if data.TodoId == 0 {
-		return ctx.JSON(http.StatusNotFound, response.NotFound("Activity", id))
+		return ctx.JSON(http.StatusNotFound, response.NotFound("Todo", id))
 	}
 
 	title := data.Title
@@ -199,25 +179,6 @@ func (rp TodoController) Update(ctx echo.Context) error {
 	}
 
 	ctx.Bind(&request)
-	// err := ctx.Bind(&request)
-	// if err != nil {
-	// 	data := reflect.ValueOf(request)
-	// 	fieldNum := data.NumField()
-	// 	reflectType := data.Type()
-
-	// 	for i := 0; i < fieldNum; i++ {
-	// 		if strings.Contains(err.Error(), strcase.SnakeCase(reflectType.Field(i).Name)) {
-	// 			return ctx.JSON(http.StatusBadRequest, response.BadRequest(reflectType.Field(i).Name, reflectType.Field(i).Type.Name()))
-	// 		}
-	// 	}
-	// }
-
-	// if err := ctx.Validate(request); err != nil {
-	// 	for _, err := range err.(validator.ValidationErrors) {
-	// 		fmt.Println(err.Field(), err.Tag())
-	// 		return ctx.JSON(http.StatusBadRequest, response.BadRequest(err.Field(), err.Tag()))
-	// 	}
-	// }
 
 	model := model.Todo{
 		Title:    request.Title,
