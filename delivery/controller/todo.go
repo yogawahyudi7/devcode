@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"devcode/constant"
 	"devcode/delivery/common"
 	"devcode/model"
 	"devcode/repository"
@@ -86,7 +87,15 @@ func (rp TodoController) GetOne(ctx echo.Context) error {
 }
 
 func (rp TodoController) Create(ctx echo.Context) error {
-	request := common.TodoCreate{}
+
+	isActive := true
+	priority := constant.VeryHigh
+
+	request := common.TodoCreate{
+		IsActive: &isActive,
+		Priority: &priority,
+	}
+
 	response := common.ResponseBody{}
 
 	ctx.Bind(&request)
@@ -116,6 +125,14 @@ func (rp TodoController) Create(ctx echo.Context) error {
 		Priority:        request.Priority,
 		IsActive:        request.IsActive,
 	}
+
+	// if model.IsActive == "" {
+	// 	model.IsActive = constant.VeryHigh
+	// }
+
+	// if model.Priority == "" {
+	// 	model.Priority = constant.VeryHigh
+	// }
 
 	data, err := rp.Todo.Create(model)
 	if err != nil {
@@ -151,7 +168,7 @@ func (rp TodoController) Delete(ctx echo.Context) error {
 		return ctx.JSON(http.StatusNotFound, response.NotFound("Todo", id))
 	}
 
-	dataMapping := common.ActivityDataResponse{}
+	dataMapping := common.DataDeleteResponse{}
 
 	return ctx.JSON(http.StatusOK, response.Success(dataMapping))
 }
@@ -162,6 +179,24 @@ func (rp TodoController) Update(ctx echo.Context) error {
 
 	id := ctx.Param("id")
 	intId, _ := strconv.Atoi(id)
+
+	data, err := rp.Todo.GetOne(intId)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
+	}
+	if data.TodoId == 0 {
+		return ctx.JSON(http.StatusNotFound, response.NotFound("Activity", id))
+	}
+
+	title := data.Title
+	isActive := data.IsActive
+	veryHigh := constant.VeryHigh
+
+	request = common.TodoUpdate{
+		Title:    title,
+		IsActive: isActive,
+		Priority: &veryHigh,
+	}
 
 	ctx.Bind(&request)
 	// err := ctx.Bind(&request)
@@ -177,12 +212,12 @@ func (rp TodoController) Update(ctx echo.Context) error {
 	// 	}
 	// }
 
-	if err := ctx.Validate(request); err != nil {
-		for _, err := range err.(validator.ValidationErrors) {
-			fmt.Println(err.Field(), err.Tag())
-			return ctx.JSON(http.StatusBadRequest, response.BadRequest(err.Field(), err.Tag()))
-		}
-	}
+	// if err := ctx.Validate(request); err != nil {
+	// 	for _, err := range err.(validator.ValidationErrors) {
+	// 		fmt.Println(err.Field(), err.Tag())
+	// 		return ctx.JSON(http.StatusBadRequest, response.BadRequest(err.Field(), err.Tag()))
+	// 	}
+	// }
 
 	model := model.Todo{
 		Title:    request.Title,
@@ -190,16 +225,12 @@ func (rp TodoController) Update(ctx echo.Context) error {
 		IsActive: request.IsActive,
 	}
 
-	rowAffected, err := rp.Todo.Update(intId, model)
+	_, err = rp.Todo.Update(intId, model)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
 
-	if rowAffected == 0 {
-		return ctx.JSON(http.StatusNotFound, response.NotFound("Todo", id))
-	}
-
-	data, err := rp.Todo.GetOne(intId)
+	data, err = rp.Todo.GetOne(intId)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}

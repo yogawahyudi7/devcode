@@ -81,7 +81,7 @@ func (db *TodoRepository) Update(id int, params model.Todo) (rowAffected int64, 
 		"is_active": params.IsActive,
 	}
 
-	query := db.db.Debug().Model(&params).Omit("activity_group_id")
+	query := db.db.Debug().Model(&params)
 
 	query = query.Where("todo_id = ?", id)
 

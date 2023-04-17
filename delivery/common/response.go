@@ -19,7 +19,7 @@ type ResponseBodyFailed struct {
 }
 type ActivityDataResponse struct {
 	Id        uint       `json:"id"`
-	Title     string     `json:"title"`
+	Title     *string    `json:"title"`
 	Email     *string    `json:"email"`
 	CreatedAt *time.Time `json:"createdAt"`
 	UpdatedAt *time.Time `json:"updatedAt"`
@@ -27,7 +27,7 @@ type ActivityDataResponse struct {
 
 type ActivityCreateDataResponse struct {
 	Id        uint       `json:"id,omitempty"`
-	Title     string     `json:"title,omitempty"`
+	Title     *string    `json:"title,omitempty"`
 	Email     *string    `json:"email,omitempty"`
 	CreatedAt *time.Time `json:"createdAt"`
 	UpdatedAt *time.Time `json:"updatedAt"`
@@ -36,11 +36,14 @@ type ActivityCreateDataResponse struct {
 type TodoDataResponse struct {
 	Id              uint       `json:"id"`
 	ActivityGroupId int        `json:"activity_group_id"`
-	Title           string     `json:"title"`
-	IsActive        bool       `json:"is_active"`
-	Priority        string     `json:"priority"`
+	Title           *string    `json:"title"`
+	IsActive        *bool      `json:"is_active"`
+	Priority        *string    `json:"priority"`
 	CreatedAt       *time.Time `json:"createdAt"`
 	UpdatedAt       *time.Time `json:"updatedAt"`
+}
+
+type DataDeleteResponse struct {
 }
 
 func (r ResponseBody) Success(data interface{}) ResponseBody {
