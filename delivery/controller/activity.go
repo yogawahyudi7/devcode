@@ -6,13 +6,10 @@ import (
 	"devcode/repository"
 	"fmt"
 	"net/http"
-	"reflect"
 	"strconv"
-	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	"github.com/stoewer/go-strcase"
 )
 
 type ActivityController struct {
@@ -39,8 +36,8 @@ func (rp ActivityController) GetAll(ctx echo.Context) error {
 			Id:        v.ActivityId,
 			Title:     v.Title,
 			Email:     v.Email,
-			CreatedAt: *v.CreatedAt,
-			UpdatedAt: *v.UpdatedAt,
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
 		}
 
 		dataMapping = append(dataMapping, vData)
@@ -69,8 +66,8 @@ func (rp ActivityController) GetOne(ctx echo.Context) error {
 		Id:        v.ActivityId,
 		Title:     v.Title,
 		Email:     v.Email,
-		CreatedAt: *v.CreatedAt,
-		UpdatedAt: *v.UpdatedAt,
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
 	}
 
 	return ctx.JSON(http.StatusOK, response.Success(dataMapping))
@@ -80,20 +77,9 @@ func (rp ActivityController) Create(ctx echo.Context) error {
 	request := common.ActivityCreate{}
 	response := common.ResponseBody{}
 
-	err := ctx.Bind(&request)
-	if err != nil {
-		data := reflect.ValueOf(request)
-		fieldNum := data.NumField()
-		reflectType := data.Type()
+	ctx.Bind(&request)
 
-		for i := 0; i < fieldNum; i++ {
-			if strings.Contains(err.Error(), strcase.SnakeCase(reflectType.Field(i).Name)) {
-				return ctx.JSON(http.StatusBadRequest, response.BadRequest(reflectType.Field(i).Name, reflectType.Field(i).Type.Name()))
-			}
-		}
-	}
-
-	if err = ctx.Validate(request); err != nil {
+	if err := ctx.Validate(request); err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			fmt.Println(err.Field(), err.Tag())
 			return ctx.JSON(http.StatusBadRequest, response.BadRequest(err.Field(), err.Tag()))
@@ -104,19 +90,19 @@ func (rp ActivityController) Create(ctx echo.Context) error {
 		Title: request.Title,
 		Email: request.Email,
 	}
-
+	fmt.Println("DSINSI")
 	data, err := rp.Activity.Create(model)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
-
+	fmt.Println("DSINSI")
 	v := data
-	dataMapping := common.ActivityDataResponse{
+	dataMapping := common.ActivityCreateDataResponse{
 		Id:        v.ActivityId,
 		Title:     v.Title,
 		Email:     v.Email,
-		CreatedAt: *v.CreatedAt,
-		UpdatedAt: *v.UpdatedAt,
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
 	}
 
 	return ctx.JSON(http.StatusCreated, response.Success(dataMapping))
@@ -137,7 +123,9 @@ func (rp ActivityController) Delete(ctx echo.Context) error {
 		return ctx.JSON(http.StatusNotFound, response.NotFound("Activity", id))
 	}
 
-	return ctx.JSON(http.StatusOK, response.Success(nil))
+	dataMapping := common.DataDeleteResponse{}
+
+	return ctx.JSON(http.StatusOK, response.Success(dataMapping))
 }
 
 func (rp ActivityController) Update(ctx echo.Context) error {
@@ -147,20 +135,25 @@ func (rp ActivityController) Update(ctx echo.Context) error {
 	id := ctx.Param("id")
 	intId, _ := strconv.Atoi(id)
 
-	err := ctx.Bind(&request)
+	data, err := rp.Activity.GetOne(intId)
 	if err != nil {
-		data := reflect.ValueOf(request)
-		fieldNum := data.NumField()
-		reflectType := data.Type()
-
-		for i := 0; i < fieldNum; i++ {
-			if strings.Contains(err.Error(), strcase.SnakeCase(reflectType.Field(i).Name)) {
-				return ctx.JSON(http.StatusBadRequest, response.BadRequest(reflectType.Field(i).Name, reflectType.Field(i).Type.Name()))
-			}
-		}
+		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
+	}
+	if data.ActivityId == 0 {
+		return ctx.JSON(http.StatusNotFound, response.NotFound("Activity", id))
 	}
 
-	if err = ctx.Validate(request); err != nil {
+	title := data.Title
+	email := data.Email
+
+	request = common.ActivityUpdate{
+		Title: title,
+		Email: email,
+	}
+
+	ctx.Bind(&request)
+
+	if err := ctx.Validate(request); err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			fmt.Println(err.Field(), err.Tag())
 			return ctx.JSON(http.StatusBadRequest, response.BadRequest(err.Field(), err.Tag()))
@@ -172,16 +165,12 @@ func (rp ActivityController) Update(ctx echo.Context) error {
 		Email: request.Email,
 	}
 
-	rowAffected, err := rp.Activity.Update(intId, model)
+	_, err = rp.Activity.Update(intId, model)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
 
-	if rowAffected == 0 {
-		return ctx.JSON(http.StatusNotFound, response.NotFound("Activity", id))
-	}
-
-	data, err := rp.Activity.GetOne(intId)
+	data, err = rp.Activity.GetOne(intId)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, response.InternalServerError(err))
 	}
@@ -191,8 +180,8 @@ func (rp ActivityController) Update(ctx echo.Context) error {
 		Id:        v.ActivityId,
 		Title:     v.Title,
 		Email:     v.Email,
-		CreatedAt: *v.CreatedAt,
-		UpdatedAt: *v.UpdatedAt,
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
 	}
 
 	return ctx.JSON(http.StatusOK, response.Success(dataMapping))

@@ -59,6 +59,7 @@ func (db *ActivityRepository) Create(params model.Activity) (data model.Activity
 		Title: params.Title,
 		Email: params.Email,
 	}
+
 	err = db.db.Debug().Create(&data).Error
 
 	if err != nil {
